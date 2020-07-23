@@ -16,6 +16,7 @@
     - openssh-server
     - slack-desktop
     - awscli
+    - gnome-screenshot
 
 - name: Install docker-ce gpg key
   apt_key:
