@@ -4,11 +4,6 @@
   apt:
     upgrade: dist
 
-#- name: Remove annoying snap apps
-#  snap:
-#    name: gnome-calculator
-#    state: absent
-
 - name: Install development packages in ubuntu
   package:
     state: present
@@ -19,7 +14,8 @@
     - apt-transport-https
     - software-properties-common
     - openssh-server
-    - slack-desktop 
+    - slack-desktop
+    - awscli
 
 - name: Install docker-ce gpg key
   apt_key:
