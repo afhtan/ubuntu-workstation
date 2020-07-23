@@ -1,0 +1,69 @@
+--- 
+
+- name: Update all ubuntu packages to the latest version
+  apt:
+    upgrade: dist
+
+#- name: Remove annoying snap apps
+#  snap:
+#    name: gnome-calculator
+#    state: absent
+
+- name: Install development packages in ubuntu
+  package:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - openjdk-8-jdk
+    - openjdk-11-jdk
+    - apt-transport-https
+    - software-properties-common
+    - openssh-server
+    - slack-desktop 
+
+- name: Install docker-ce gpg key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+    filename: docker-ce
+
+- name: Install docker packages in ubuntu
+  package:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - docker-ce
+    - docker-compose
+
+- name: Install utilities into ubuntu
+  package:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - gnome-calculator
+
+- name: Check if vscode is installed
+  stat: 
+    path: /etc/apt/sources.list.d/vscode.list
+  register: vscode_repo
+
+- name: "Install VSCode in Ubuntu based distro"
+  apt: 
+    deb: https://go.microsoft.com/fwlink/?LinkID=760868
+  when: vscode_repo.stat.exists == false
+
+- name: Check if Google Chrome is installed
+  stat: 
+    path: /etc/apt/sources.list.d/google-chrome.list
+  register: chrome_repo
+
+- name: "Install Google Chrome in Ubuntu based distro"
+  apt: 
+    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  when: chrome_repo.stat.exists == false
+
+...

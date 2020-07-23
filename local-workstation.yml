@@ -1,0 +1,9 @@
+---
+
+- hosts: workstations
+  become: true
+  connection: local
+  roles:
+    - linux-workstation
+
+...

@@ -1,0 +1,65 @@
+---
+
+- name: Install development packages
+  package:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - ansible
+    - git
+    - maven
+    - net-tools
+    - telnet
+    - vim
+    - ca-certificates
+    - curl
+
+- name: Remove old version of docker
+  package:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - docker
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+    - docker-logrotate
+    - docker-engine  
+
+#- name: "Install aws-cli"
+  
+
+- name: Install terraform 
+  unarchive:
+    src: https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip
+    dest: /usr/local/bin/
+    remote_src: true
+
+- name: Check if helm is installed
+  stat: 
+    path: /usr/local/bin/helm
+  register: helm
+
+- name: Download helm 
+  unarchive:
+    src: https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: true
+    creates: /usr/local/bin/helm
+
+- name: Copy helm to bin
+  copy:
+    src: /tmp/linux-amd64/helm
+    dest: /usr/local/bin/helm
+    owner: root
+    group: root
+    mode: '0755'
+  when: helm.stat.exists == false
+
+- name: "Install dev tools in ubuntu based distro"
+  import_tasks: ubuntu.yml
+  when: ansible_distribution == 'Linux Mint' or ansible_distribution == 'Ubuntu'
+
+...
